@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+
+<div class="row">
+    <div class="col-md-12 grid-margin">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="d-sm-flex align-items-baseline report-summary-header">
+                <h5 class="font-weight-semibold">User Dashboard</h5>
+              </div>
+            </div>
+          </div>
+          <div class="row report-inner-cards-wrapper">
+            <div class="col-md-6 col-xl report-inner-card">
+              <div class="inner-card-text">
+                <span class="report-title">Total Complaints</span>
+                <h4>{{complaints_count}}</h4>
+                <a href="{% url 'complainthistory' %}"><span class="report-count"> View Details</span></a>
+              </div>
+              <div class="inner-card-icon bg-primary">
+                <i class="icon-doc"></i>
+              </div>
+            </div>
+            <div class="col-md-6 col-xl report-inner-card">
+              <div class="inner-card-text">
+                <span class="report-title">New Complaints</span>
+                <h4>{{newcom_count}}</h4>
+                <a href="{% url 'complainthistory' %}"><span class="report-count"> View Details</span></a>
+              </div>
+              <div class="inner-card-icon bg-warning">
+                <i class="icon-doc"></i>
+              </div>
+            </div>
+            <div class="col-md-6 col-xl report-inner-card">
+              <div class="inner-card-text">
+                <span class="report-title">Inprocess Complaints</span>
+                <h4>{{ipcom_count}}</h4>
+                <a href="{% url 'complainthistory' %}"><span class="report-count"> View Details</span></a>
+              </div>
+              <div class="inner-card-icon bg-danger">
+                <i class="icon-doc"></i>
+              </div>
+            </div>
+            <div class="col-md-6 col-xl report-inner-card">
+              <div class="inner-card-text">
+                <span class="report-title">Closed Complaints</span>
+                <h4>{{closed_count}}</h4>
+                <a href="{% url 'complainthistory' %}"><span class="report-count"> View Details</span></a>
+              </div>
+              <div class="inner-card-icon bg-success">
+                <i class="icon-doc"></i>
+              </div>
+            </div>
+          </div>
+           <!-- Pie Chart Section -->
+           <div class="row justify-content-center" style="margin-top: 20px;"> <!-- Added justify-content-center for horizontal centering -->
+            <div class="col-md-6 text-center"> <!-- Center the text and canvas -->
+                <h4>Complaint Status Overview</h4>
+                <canvas id="complaintStatusChart" width="150" height="150"></canvas>
+            </div>
+        </div>
+
+        <script>
+          var ctx = document.getElementById('complaintStatusChart').getContext('2d');
+          var complaintStatusChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels: ['Not Processed Yet', 'In Process', 'Closed'],
+              datasets: [{
+                label: 'Complaint Status',
+                data: [{{ newcom_count }}, {{ ipcom_count }}, {{ closed_count }}],
+                backgroundColor: [
+                'rgba(255, 204, 51, 1)',  // Yellow for Not Processed Yet
+                'rgba(255, 51, 51, 1)',   // Red for In Process
+                'rgba(51, 204, 51, 1)'    // Green for Closed
+            ],
+            borderColor: [
+                'rgba(255, 204, 51, 1)',  // Yellow for Not Processed Yet
+                'rgba(255, 51, 51, 1)',   // Red for In Process
+                'rgba(51, 204, 51, 1)'    // Green for Closed
+            ],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  position: 'top',
+                },
+                title: {
+                  display: true,
+                  text: 'Complaint Status Overview'
+                }
+              }
+            }
+        });
+        </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- Add JS for Notification -->
+<script>
+    // Show notification when complaint is closed
+    window.onload = function() {
+        // Check if the user was notified about a complaint closure
+        {% if complaint_closed %}
+            showNotification();
+        {% endif %}
+    };
+
+</script>
+{% endblock %}
